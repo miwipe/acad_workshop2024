@@ -80,12 +80,12 @@ dependencies:
 - gappa
 ```
 
-Lets create both environments
+Lets create both environments (NOTE! that each will take a bit of time ~5 min)! 
 ```
 conda env create -f acad-euks_1.yaml
 conda env create -f acad-euks_2.yaml
 ```
-and activate the first environment
+and then activate the first environment
 ```
 conda activate acad-euks_1.yaml
 ```
@@ -113,35 +113,36 @@ ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR104/077/ERR10493277/ERR10493277_2.fastq.gz
 This was just for you information, and if you wanted to play around with the full size dataset later. So do not dowload. And as James have been going through adaptor trimming and QC I will not go into much detail about this here. How I did this can be found here https://github.com/miwipe/KapCopenhagen
 
 
-# we start by
+# Lets get some data analysis done
 
-
+If not already on the node log in as described above, then activate the acad-euks_1 conda environment
 ```
 conda activate acad-euks_1
 ```
 
-
-Remove duplicates (100% identical)
+**Quality control of trimmed and merged sequences**
+When handling large data and mapping against large reference genome collections, it can be important to remove duplicates, to save cpu and run time. For this, I use vsearch https://github.com/torognes/vsearch which is a fast tool that screens for 100% identical sequences (most likely caused by PCR duplication). You can use vsearch --help to familiarize yourself with its options. 
 ```
 time vsearch --fastx_uniques ERR10493277_small-FINAL.fq.gz --fastqout ERR10493277_small-FINAL.vs.fq --minseqlength 30 --strand both
 ```
 
-# removes low complexity reads dust ranges from 1-4 where 1 being the most stringent.
+Another important aspect is to clean out low complex sequences again several tools can do this, I use sga / bbduk in which dust ranges from 1-4 where 1 is the most stringent.
 ```
 time sga preprocess -m 30 --dust-threshold=1 ERR10493277_small-FINAL.vs.fq  -o ERR10493277_small-FINAL.vs.d1.fq
 ```
 
+It is good practice to double-check that your output is good, and what consequences the filters have had for the data. Lets check what sequences was filtered out. 
+```
+grep 'M_A00706' ERR10493277_small-FINAL.vs.d1.fq # prints the readIDs of each sequence that parsed filters
 
-grep 'M_A00706' ERR10493277_small-FINAL.vs.d1.fq
+for file in ERR10493277_small-FINAL.vs.d1.fq; do grep 'M_A00706' $file | cut -f2 -d@ > $file.readID.tmp ; done # we can make this into a text file with all readIDs that parsed
 
-for file in ERR10493277_small-FINAL.vs.d1.fq; do grep 'M_A00706' $file | cut -f2 -d@ > $file.readID.tmp ; done
+grep 'M_A00706' ERR10493277_small-FINAL.vs.fq | grep -f readID.tmp -v | cut -f2 -d@ > $file.readID_lowcom.tmp # we can then inverse grep these readIDs in the original fastq file, to get the readIDs of the filtered sequences
 
-grep 'M_A00706' ERR10493277_small-FINAL.vs.fq | grep -f readID.tmp -v | cut -f2 -d@ > $file.readID_lowcom.tmp
+wc -l ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp # how many reads did we filter out, and does it correspond to the stdout sga printed? 
 
-wc -l ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
-
-seqtk subseq ERR10493277_small-FINAL.vs.fq ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
-
+seqtk subseq ERR10493277_small-FINAL.vs.fq ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp # we can use seqtk to grep out all sequences that where categorized as low complex, what do you see? 
+```
 
 
 for file in ERR10493277_small-FINAL.vs.d1.fq
@@ -165,10 +166,10 @@ user	90m15.170s
 sys	1m17.688s
 ```
 
-Extra assignment, for those who finishes first you could consider running the non low complexity filtered file for later comparison, using the same command.
+Extra assignment, for those who finishes first you could consider running the non-filtered file for later comparison, using the same command.
 
 ```
-Mapping ERR10493277_small-FINAL.vs.fq against /projects/lundbeck/people/npl206/databases/organelles_04042022/refseq211_small_dedup.fa
+Mapping ERR10493277_small-FINAL.vs.fq against /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
 10046690 reads; of these:
   10046690 (100.00%) were unpaired; of these:
     9861326 (98.15%) aligned 0 times
