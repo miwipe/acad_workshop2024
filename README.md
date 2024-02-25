@@ -1,23 +1,22 @@
 # ACAD aeDNA Workshop Commands Eukaryotes
 
-# 
 Login into the cloud server as the other days using ssh
 
 ```
 ssh user@acadworkshop.uoa.cloud
 ```
 
-Then lets activate your node 
+Then lets activate your node
 ```
 bash /apps/scripts/cluster_allocation.sh 1
 ```
 
 As we will be going into detail on each command/programme lets open an interactive bash shell on the slurm
 ```
-srun --export=ALL --ntasks-per-node 15  --nodes 1 --mem 120G  -t 05:00:00 --pty bash
+srun --export=ALL --ntasks-per-node 15  --nodes 1 --mem 120G  -t 02:00:00 --pty bash
 ```
 
-For checking your ressources and jobs running use htop / top
+For checking your ressources and jobs running use `htop` / `top`
 ```
 htop
 ```
@@ -29,8 +28,40 @@ press q for quit to exit the screen
 bash /apps/scripts/cluster_allocation.sh 0
 ```
 
-Create two (acad-euks_1 and acad-euks_2) environment files and here after the corresponding conda environment. 
-First use a text editor in the terminal, it could be vi/vim/nano, copy and paste the content in the box below and save the file as acad-euks_1.yaml. 
+## Fork github repo and clone it to your home directory
+
+To fork a Git repository means to create a copy of it in your own GitHub account (or any other Git hosting service). Here are the general steps to fork a Git repository:
+
+Log in to GitHub: Go to https://github.com and log in to your GitHub account. If you don't have one, you'll need to sign up first.
+
+Find the Repository to Fork : Navigate to the repository you want to fork. You can do this by searching for the repository in the GitHub search bar or by accessing it through a direct link.
+
+Fork the Repository: Once you're on the repository's page, you'll see a button labeled "Fork" at the top right corner of the page. Click on this button. GitHub will then create a copy of the repository under your GitHub account.
+
+Clone Your Forked Repository: After forking, you'll have your own copy of the repository on your GitHub account. To work with the repository locally on your computer, you need to clone it. To do this, click on the green "Code" button on your forked repository's page, copy the HTTPS or SSH URL, then use Git to clone the repository to your local machine.
+
+Example:
+
+```
+git clone https://github.com/your-username/forked-repository.git
+```
+Add a Remote (Optional): By default, Git will add a remote named "origin" that points to your forked repository on GitHub. If you want to keep track of the original repository that you forked from, you can add a remote with a different name.
+
+csharp
+Copy code
+git remote add upstream https://github.com/original-owner/original-repository.git
+Syncing with the Original Repository (Optional): If you want to keep your forked repository up-to-date with changes made to the original repository, you can fetch the changes from the original repository and merge them into your local repository.
+
+sql
+Copy code
+git fetch upstream
+git merge upstream/main
+Make Changes and Push: Now that you have your own forked repository, you can make changes to the code, commit them, and push them back to your forked repository on GitHub.
+
+
+## Setting up your conda environments and other dependencies
+Create two (acad-euks_1 and acad-euks_2) environment files and here after the corresponding conda environment.
+First use a text editor in the terminal, it could be vi/vim/nano, copy and paste the content in the box below and save the file as acad-euks_1.yaml.
 
 **acad-euks_1**
 ```
@@ -57,10 +88,11 @@ dependencies:
   - sga
   - seqtk
   - fasta-splitter
-  - datamash 
+  - datamash
+  - seqkit
 ```
 
-Now repeat the same here but calling the files acad-euks_2.yaml. 
+Now repeat the same here but calling the files acad-euks_2.yaml.
 
 **acad-euks_2**
 ```
@@ -78,9 +110,10 @@ dependencies:
 - samtools
 - epa-ng
 - gappa
+- seqkit
 ```
 
-Lets create both environments (NOTE! that each will take a bit of time ~5 min)! 
+Lets create both environments (NOTE! that each will take a bit of time ~5 min)!
 ```
 conda env create -f acad-euks_1.yaml
 conda env create -f acad-euks_2.yaml
@@ -95,7 +128,7 @@ Lastly, we will install bam-filter in the acad-euks_1 using pip
 pip install bam-filter
 ```
 
-For your information we have also installed the following programmes that are not part of the conda packages:
+For your information we have also installed the following programmes that are not part of the `conda` packages:
 ```
 pathPhynder https://github.com/ruidlpm/pathPhynder
 Bamcov https://github.com/fbreitwieser/bamcov
@@ -110,7 +143,7 @@ ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR104/077/ERR10493277/ERR10493277_1.fastq.gz
 ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR104/077/ERR10493277/ERR10493277_2.fastq.gz
 ```
 
-This was just for you information, and if you wanted to play around with the full size dataset later. So do not dowload. And as James have been going through adaptor trimming and QC I will not go into much detail about this here. How I did this can be found here https://github.com/miwipe/KapCopenhagen
+This was just for you information, and if you wanted to play around with the full size dataset later. So do not download. And as James have been going through adaptor trimming and QC I will not go into much detail about this here. How I did this can be found here https://github.com/miwipe/KapCopenhagen
 
 
 # Lets get some data analysis done
@@ -121,7 +154,7 @@ conda activate acad-euks_1
 ```
 
 **Quality control of trimmed and merged sequences**
-When handling large data and mapping against large reference genome collections, it can be important to remove duplicates, to save cpu and run time. For this, I use vsearch https://github.com/torognes/vsearch which is a fast tool that screens for 100% identical sequences (most likely caused by PCR duplication). You can use vsearch --help to familiarize yourself with its options. 
+When handling large data and mapping against large reference genome collections, it can be important to remove duplicates, to save cpu and run time. For this, I use `vsearch` https://github.com/torognes/vsearch which is a fast tool that screens for 100% identical sequences (most likely caused by PCR duplication). You can use `vsearch --help` to familiarize yourself with its options.
 ```
 time vsearch --fastx_uniques ERR10493277_small-FINAL.fq.gz --fastqout ERR10493277_small-FINAL.vs.fq --minseqlength 30 --strand both
 ```
@@ -131,27 +164,85 @@ Another important aspect is to clean out low complex sequences again several too
 time sga preprocess -m 30 --dust-threshold=1 ERR10493277_small-FINAL.vs.fq  -o ERR10493277_small-FINAL.vs.d1.fq
 ```
 
-It is good practice to double-check that your output is good, and what consequences the filters have had for the data. Lets check what sequences was filtered out. 
+It is good practice to double-check that your output is good, and what consequences the filters have had for the data. Lets check what sequences was filtered out.
 ```
-grep 'M_A00706' ERR10493277_small-FINAL.vs.d1.fq # prints the readIDs of each sequence that parsed filters
+# prints the readIDs of each sequence that parsed filters
+grep 'M_A00706' ERR10493277_small-FINAL.vs.d1.fq
 
-for file in ERR10493277_small-FINAL.vs.d1.fq; do grep 'M_A00706' $file | cut -f2 -d@ > $file.readID.tmp ; done # we can make this into a text file with all readIDs that parsed
+# we can make this into a text file with all readIDs that parsed
+for file in ERR10493277_small-FINAL.vs.d1.fq; do grep 'M_A00706' $file | cut -f2 -d@ > $file.readID.tmp ; done
 
-grep 'M_A00706' ERR10493277_small-FINAL.vs.fq | grep -f readID.tmp -v | cut -f2 -d@ > $file.readID_lowcom.tmp # we can then inverse grep these readIDs in the original fastq file, to get the readIDs of the filtered sequences
+# we can then inverse grep these readIDs in the original fastq file, to get the readIDs of the filtered sequences
+grep 'M_A00706' ERR10493277_small-FINAL.vs.fq | grep -f readID.tmp -v | cut -f2 -d@ > $file.readID_lowcom.tmp
 
-wc -l ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp # how many reads did we filter out, and does it correspond to the stdout sga printed? 
+# how many reads did we filter out, and does it correspond to the stdout sga printed?
+wc -l ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
 
-seqtk subseq ERR10493277_small-FINAL.vs.fq ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp # we can use seqtk to grep out all sequences that where categorized as low complex, what do you see? 
+# we can use seqtk to grep out all sequences that where categorized as low complex, what do you see?
+seqtk subseq ERR10493277_small-FINAL.vs.fq ERR10493277_small-FINAL.vs.d1.fq.readID_lowcom.tmp
 ```
 
+First validation step extract and plot the read lengths of your QCed fasta file.
 
-for file in ERR10493277_small-FINAL.vs.d1.fq
+
+# extract readlength distribution from fastq files
+```
+for file in *.vs.fq
 do
-DB=/shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
-echo Mapping $file against $DB
-time bowtie2 --threads 15 -k 1000 -x $DB -U $file --no-unal | samtools view -bS - > $file.$(basename $DB).bam
-done &> refseq211_small_dedup_mapping.log.txt
+cat $file | awk '{if(NR%4==2) print length($1)}' | sort -n | uniq -c > $file.read_length.txt &
+done
+```
 
+
+Rename your readlength distribution files, by copying, pasting and saving this bash script (like we did with the environment files) as rename_readlength_files.sh
+
+```
+#!/bin/bash
+
+for file in *.read_length.txt
+do
+    if [[ -f $file ]]; then
+        new_file="$(echo $file | cut -d'.' -f1).txt"
+        mv "$file" "$new_file"
+        echo "Renamed $file to $new_file"
+    fi
+done
+```
+
+Now change the permissions of the file for it to be executable using `chmod +x`
+
+```
+chmod +x rename_readlength_files.sh
+```
+
+Now lets run a script that takes one or more read_length.txt files and plots them using ggplot. Make sure that the R conda environment is activated or there is a system wide R installation
+
+```
+/shared/mikkelpedersen/acad_test/tutorials/acad_workshop2024/scripts/readlengthPLOT_fastq.sh
+```
+
+Lets download the pdf and have a look at it. Is there differences between the fqs read length distributions?
+
+Next, what is it `bowtie2` can do and what options have we set? Look at the command below and check the options and settings.
+
+```
+bowtie2 --help
+```
+
+Lets map the reads to our database (database was generated by indexing the multi reference fasta file refseq211_small_dedup.fa with `bowtie2-build -@ 12 refseq211_small_dedup.fa`). Depending on the size of the file it will run for short and longer time. We skip this step, due to limited time. A bowtie2 database consists of 6 subfiles ending .bt2l. Lets first check they are there.
+
+```
+ls -lh  /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa*
+```
+
+Map reads against database
+```
+DB=/shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
+time bowtie2 --threads 15 -k 1000 -x $DB -U ERR10493277_small-FINAL.vs.d1.fq --no-unal | samtools view -bS - > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.bam
+
+```
+
+The stdout should look like this, time might vary a bit
 ```
 Mapping ERR10493277_small-FINAL.vs.d1.fq against /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
 10045794 reads; of these:
@@ -166,35 +257,23 @@ user	90m15.170s
 sys	1m17.688s
 ```
 
-Extra assignment, for those who finishes first you could consider running the non-filtered file for later comparison, using the same command.
+Extra assignment! Aor those who finishes fast. Consider running the non-filtered file for later comparison, using the same command. Or changing the `bowtie2` option settings
 
-```
-Mapping ERR10493277_small-FINAL.vs.fq against /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
-10046690 reads; of these:
-  10046690 (100.00%) were unpaired; of these:
-    9861326 (98.15%) aligned 0 times
-    14720 (0.15%) aligned exactly 1 time
-    170644 (1.70%) aligned >1 times
-1.85% overall alignment rate
-
-real	7m1.370s
-user	89m31.775s
-sys	2m25.342s
-```
 
 # filtering and refining alignment output using bam-filter and the metaDMG compressbam function
 
 In this step we clean out the header of the alignment file, to only contain references that have
 
 ```
-/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
+time /shared/mikkelpedersen/acad_test/euks_programmes/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 ```
+The stdout should look similar to this once `compressbam` is done. (This tool is valuable when handling databases with large amounts of reference genomes. Especially when the header of the bam files exceeds 2Gb sizes then samtools cannot handle the header as a bam file format, which is the reason we developed this tool)
 ```
-  /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
+  /shared/mikkelpedersen/acad_test/euks_programmes/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 	-> compressbam: (compressbam.cpp;Feb 20 2024;09:58:30): '/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam'
 	-> input: ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam; output: ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam; out format: wb; ref: (null); nthreads: 4
 	-> Header has now been read. Will now start list of refIDs to use
-	->  Now at read:     47800001
+	-> Now at read:     47800001
 	-> Done reading list of refids: to keep 57260
 	-> Number of alignments parsed: 47825234
 	-> Done writing new header as text
@@ -206,10 +285,16 @@ In this step we clean out the header of the alignment file, to only contain refe
 	-> [ALL done] cpu-time used =  161.29 sec walltime used =  84.00 sec
 ```
 
-The alignment file now only have references in the header that also received an alignment, and we now turn our focus
+The alignment file now only have references in the header that also received an alignment, and we now turn our focus to the alignments in the "header compressed" bam file. As we have specified the -k 1000 option in bowtie2, reads can potentially have up to 1000 alignments, lets double check that we did not saturate the number of alignments allowed and thereby not allowing the read an equal chance to map against all alignments. This is just simple text gymnastics. We cut out the readID in each alignments sort these and count how many times the read occurs. if = 1000 it is saturated.
 
 ```
-time filterBAM reassign --bam MED-2021-20-ver15-2LFQY-210811_S18.bam -t 12 -i 0 -A 92 -m 8G -o MED-2021-20-ver15-2LFQY-210811_S18.reassigned.bam -n 3
+samtools view ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam | cut -f1 | sort | uniq -c | sort -k1 -n
+```
+
+As ngsLCA (also the version embedded in metaDMG), does not look specifically at each alignment to determine which is closest, we have developed a small algorithm to run over the bam and keep alignments that are closest to reference inside `bam-filter`. This discard alignments that have poorer alignment stats than the set values in options.
+```
+time filterBAM reassign --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam -t 12 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.reassigned.bam -n 3
+
 for file in *.comp.bam; do time filterBAM reassign --bam $file -t 12 -i 0 -A 92 -m 8G -o $file.reassigned.bam -n 3; done
 ```
 
@@ -217,27 +302,75 @@ for file in *.comp.bam; do time filterBAM reassign --bam $file -t 12 -i 0 -A 92 
 ```
 filterBAM filter -e 0.6 -m 8G -t 12 -n 3 -A 92 -a 95 -N --bam  MED-2021-20-ver15-2LFQY-210811_S18.reassigned.bam --stats MED-2021-20-ver15-2LFQY-210811_S18.stats.tsv.gz --stats-filtered MED-2021-20-ver15-2LFQY-210811_S18.stats-filtered.tsv.gz --bam-filtered MED-2021-20-ver15-2LFQY-210811_S18.filtered.bam
 for file in *.reassigned.bam; do time filterBAM filter -e 0.6 -m 8G -t 12 -n 3 -A 92 -a 95 -N --bam $file --stats $file.stats.tsv.gz --stats-filtered $file.stats-filtered.tsv.gz --bam-filtered $file.filtered.bam ; done
+```
+
+## Taxonomic classification (ngsLCA) and DNA damage estimation (metaDMG)
+**While `metaDMG lca` is running through the alignment file, it also collects mismatch information for all reads and their alignments**
 
 
-acc2tax=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/combined_accession2taxid_20221112.gz
+```
+#acc2tax=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/combined_accession2taxid_20221112.gz
 nodes=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/nodes.dmp
 names=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/names.dmp
+acc2tax=/projects/lundbeck/people/npl206/TMP/small_accession2taxid.txt.gz
 
-for file in *.bam.filtered.bam
+for file in ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.sort.bam
 do
-/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 12 --bam $file --out_prefix $file
-done 
-
-
-
-for file in ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.fa.fastlocal.bam.comp.bam.reassigned.bam.filtered.bam
-do
-/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp getdamage --run_mode 1 -n 8 -l 30 -p 30 -o $file.getdamage $file 
+time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 12 --bam $file --out_prefix $file
 done
 
+```
+
+Now familiarize yourself with the log output that `metaDMG lca`, importantly if there are accession numbers
+
+hint https://www.ncbi.nlm.nih.gov/
+another important look-up tool https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi
+
+are there other ways we can go back and find out what is going on?
+
+hint the database and the taxonomy used.
+
+Now
+https://bioinf.shenwei.me/csvtk/
+https://github.com/TabViewer/tabview
+
+Tabview dependencies was not compatible with the acad-euks_1 environment, but was in the acad-euks_2. Lets activate this
+```
+conda activate acad-euks_2
+```
 
 
+quick and dirty version (for the impatient)
+```
+for file in *.sort.bam *filtered.bam
+do
+time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2  --lib ds --out $file
+done
+```
 
+Do full stats (for the patient)
+```
+for file in *.sort.bam *filtered.bam
+do
+time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out $file
+done
+```
 
-/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit $file.getdamage.bdamage.gz --names $names--nodes $nodes --threads 12 --lcastat $file.getdamage.stat.gz --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out $file.dfit
+Aggregate (sum) all results up the taxonomic tree from nodes to root.
+```
+for file in *.sort.bam *filtered.bam
+do
+time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp aggregate $file.bdamage.gz --lcastat $file.stat.gz --names $names --nodes $nodes
+done
+```
 
+Paste the resulting lca stats and damage stats for a final metaDMG out.
+```
+zcat $file.bdamage.gz.stat.gz | paste - <(zcat $file.dfit.gz) > $file.combined_metaDMG_output.txt
+
+```
+
+Now lets explore the output, perhaps using tabview
+```
+tabview $file.combined_metaDMG_output.txt
+```
