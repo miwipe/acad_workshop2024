@@ -6,8 +6,10 @@ Login into the cloud server as the other days using ssh
 ssh user@acadworkshop.uoa.cloud
 ```
 First lets add
-pkgs_dirs: \n
+
+pkgs_dirs:
     - /shared/conda-cache
+
 to the .condarc file
 ```
 vim .condarc
@@ -48,21 +50,19 @@ GitHub is a web-based platform used for version control and collaboration on sof
 
 Log in to GitHub: Go to https://github.com and log in to your GitHub account. If you don't have one, you'll need to sign up first.
 
-*** Consider whether you want it to be private or public (It is possible to apply for a educational lisence [for free] and then you have the private option), you can change it from private to public, when private only you and people you have invited can see the repo. ***
+**Consider whether you want it to be private or public (It is possible to apply for a educational lisence [for free] and then you have the private option), you can change it from private to public, when private only you and people you have invited can see the repo**
 
-
-
-
-Clone Your Forked Repository: After forking, you'll have your own copy of the repository on your GitHub account. To work with the repository locally on your computer, you need to clone it. To do this, click on the green "Code" button on your forked repository's page, copy the HTTPS or SSH URL, then use Git to clone the repository to your local machine.
+To work with the repository locally on your computer, you need to clone it. To do this, click on the green "Code" button on your forked repository's page, copy the HTTPS or SSH URL, then use Git to clone the repository to your local machine.
 
 ```
-git clone https://github.com/your-username/forked-repository.git
+git clone https://github.com/your-username/repository.git
 ```
+
 Add a Remote (Optional): By default, Git will add a remote named "origin" that points to your forked repository on GitHub. If you want to keep track of the original repository that you forked from, you can add a remote with a different name.
 
-Make Changes and Push: Now that you have your own forked repository, you can make changes to the code, commit them, and push them back to your forked repository on GitHub.
+Make Changes and Push: Now that you have a local copy of your repository, you can start writing the code, commit them, and push them back to your online repository on GitHub.
 
-Add your name to the first line (Header) in the README.md file using a text editor (vim, vi, nano). Now add the changes, commit writing a message and push it to your copy of the repo.
+Add a header to the first line (Header) in the README.md file using a text editor (vim, vi, nano). Now add the changes, commit writing a message and push it to your copy of the repo.
 ```
 git status
 git add .
@@ -114,7 +114,6 @@ Syncing with the Original Repository (Optional): If you want to keep your forked
 ```
 git fetch upstream
 ```
-
 
 ## Setting up your conda environments and other dependencies
 Create two (acad-euks_1 and acad-euks_2) environment files and here after the corresponding conda environment.
@@ -325,8 +324,6 @@ time  /apps/software/metaDMG-cpp/misc/compressbam --threads 4 --input ERR1049327
 
 The stdout should look similar to this once `compressbam` is done. (This tool is valuable when handling databases with large amounts of reference genomes. Especially when the header of the bam files exceeds 2Gb sizes then samtools cannot handle the header as a bam file format, which is the reason we developed this tool)
 
-
-
 ```
 /apps/software/metaDMG-cpp/misc/compressbam  --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 	-> compressbam: (compressbam.cpp;Feb 20 2024;09:58:30): '/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam'
@@ -341,7 +338,7 @@ The stdout should look similar to this once `compressbam` is done. (This tool is
 	-> header info reduction nref: 0.280490 bytesize: 0.269679
 	-> Done writing new header as binary
 	->  Now at read:     47800001 	-> Done writing file: 'ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam'
-	-> [ALL done] cpu-time used =  161.29 sec walltime used =  84.00 sec
+	-> [ALL done] cpu-time used =  126.91 sec walltime used =  48.00 sec
 ```
 
 The alignment file now only have references in the header that also received an alignment, and we now turn our focus to the alignments in the "header compressed" bam file. As we have specified the -k 1000 option in bowtie2, reads can potentially have up to 1000 alignments, lets double check that we did not saturate the number of alignments allowed and thereby not allowing the read an equal chance to map against all alignments. This is just simple text gymnastics. We cut out the readID in each alignments sort these and count how many times the read occurs. if = 1000 it is saturated.
@@ -372,11 +369,7 @@ nodes=/shared/data/euks_taxonomy/nodes.dmp
 names=/shared/data/euks_taxonomy/names.dmp
 acc2tax=/shared/data/euks_taxonomy/small_accession2taxid.txt.gz
 
-for file in ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.sort.bam
-do
-time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam $file --out_prefix $file
-done
-
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.sort.bam --out_prefix ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.sort.bam
 ```
 
 Now familiarize yourself with the log output that `metaDMG lca`, importantly if there are accession numbers
