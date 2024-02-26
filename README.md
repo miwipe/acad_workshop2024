@@ -6,8 +6,8 @@ Login into the cloud server as the other days using ssh
 ssh user@acadworkshop.uoa.cloud
 ```
 First lets add
-`pkgs_dirs:
-    - /shared/conda-cache`
+pkgs_dirs: \n
+    - /shared/conda-cache
 to the .condarc file
 ```
 vim .condarc
