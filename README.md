@@ -5,15 +5,28 @@ Login into the cloud server as the other days using ssh
 ```
 ssh user@acadworkshop.uoa.cloud
 ```
+First lets add
+`pkgs_dirs:
+    - /shared/conda-cache`
+to the .condarc file
+```
+vim .condarc
 
+```
 Then lets activate your node
+
 ```
 bash /apps/scripts/cluster_allocation.sh 1
+```
+Check that the node is up an running, this might take some time
+
+```
+sinfo
 ```
 
 As we will be going into detail on each command/programme lets open an interactive bash shell on the slurm
 ```
-srun --export=ALL --ntasks-per-node 15  --nodes 1 --mem 120G  -t 02:00:00 --pty bash
+srun --export=ALL --ntasks-per-node 4 --nodes 1 --mem 40G  -t 02:00:00 --pty bash
 ```
 
 For checking your ressources and jobs running use `htop` / `top`
@@ -28,35 +41,79 @@ press q for quit to exit the screen
 bash /apps/scripts/cluster_allocation.sh 0
 ```
 
-## Fork github repo and clone it to your home directory
+## Make github repo and clone it to your home directory in the cloud
 
-To fork a Git repository means to create a copy of it in your own GitHub account (or any other Git hosting service). Here are the general steps to fork a Git repository:
+
+GitHub is a web-based platform used for version control and collaboration on software development projects. It provides a variety of features for developers and teams to work together efficiently on coding projects.
 
 Log in to GitHub: Go to https://github.com and log in to your GitHub account. If you don't have one, you'll need to sign up first.
 
-Find the Repository to Fork : Navigate to the repository you want to fork. You can do this by searching for the repository in the GitHub search bar or by accessing it through a direct link.
+*** Consider whether you want it to be private or public (It is possible to apply for a educational lisence [for free] and then you have the private option), you can change it from private to public, when private only you and people you have invited can see the repo. ***
 
-Fork the Repository: Once you're on the repository's page, you'll see a button labeled "Fork" at the top right corner of the page. Click on this button. GitHub will then create a copy of the repository under your GitHub account.
+
+
 
 Clone Your Forked Repository: After forking, you'll have your own copy of the repository on your GitHub account. To work with the repository locally on your computer, you need to clone it. To do this, click on the green "Code" button on your forked repository's page, copy the HTTPS or SSH URL, then use Git to clone the repository to your local machine.
-
-Example:
 
 ```
 git clone https://github.com/your-username/forked-repository.git
 ```
 Add a Remote (Optional): By default, Git will add a remote named "origin" that points to your forked repository on GitHub. If you want to keep track of the original repository that you forked from, you can add a remote with a different name.
 
-csharp
-Copy code
+Make Changes and Push: Now that you have your own forked repository, you can make changes to the code, commit them, and push them back to your forked repository on GitHub.
+
+Add your name to the first line (Header) in the README.md file using a text editor (vim, vi, nano). Now add the changes, commit writing a message and push it to your copy of the repo.
+```
+git status
+git add .
+git commit -m "Name added to header"
+git push
+```
+Navigate to your repo in your browser and check that the change have been made. (Refresh the page if necessary)
+
+Now lets list the commits
+```
+git log
+git log --oneline --decorate --graph
+```
+That should print something similar to this:
+* 8425734 (HEAD -> main, origin/main, origin/HEAD) added github tutorial and fix metaDMG commands
+* f8b9f70 Update README.md
+* 106148d Update README.md
+* 2081ee6 Initial commit
+
+You can roll back to previous versions using 'git checkout', maybe if you made a mistake or just need to run a previous version.
+
+```
+git checkout 106148d
+```
+
+and you can roll back to the main (most recent version)
+
+```
+git checkout main  
+```
+
+These are the most common commands, and would be useful perhaps for each individual project. A good advice is to constantly keep your repo updated (git push) but only when you have made changes! And make one for each of your projects, this is good practice and you need to have this for your eventual publication anyways. Trust me you will save time by doing this on the fly instead of waiting to publication is close.
+
+The last cool thing about git is that it allows for multiple users to collaborate on the same code, still keeping track of all versions. And as a Centre or group you can have an organization in GitHub like https://github.com/GeoGenetics where you have public and private repos that are shared.
+
+You can also fork a repo e.g. make your own copy of the repo, and develop on it for yourself or help on the repo development
+
+To fork a Git repository means to create a copy of it in your own GitHub account (or any other Git hosting service). Here are the general steps to fork a Git repository:
+
+Find the Repository to Fork: Navigate to the repository you want to fork. You can do this by searching for the repository in the GitHub search bar or by accessing it through a direct link or finding it on the list of repositories on Mikkels GitHub profile.
+
+Fork the Repository: Once you're on the repository's page, you'll see a button labeled "Fork" at the top right corner of the page. Click on this button. GitHub will then create a copy of the repository under your GitHub account.
+
+```
 git remote add upstream https://github.com/original-owner/original-repository.git
+```
 Syncing with the Original Repository (Optional): If you want to keep your forked repository up-to-date with changes made to the original repository, you can fetch the changes from the original repository and merge them into your local repository.
 
-sql
-Copy code
+```
 git fetch upstream
-git merge upstream/main
-Make Changes and Push: Now that you have your own forked repository, you can make changes to the code, commit them, and push them back to your forked repository on GitHub.
+```
 
 
 ## Setting up your conda environments and other dependencies
@@ -137,7 +194,7 @@ ngsLCA https://github.com/miwipe/ngsLCA
 Euka https://github.com/grenaud/vgan
 ```
 
-The dataset we are going to play with is downscaled from raw data, and 10 mill. reads were extracted from a QCed, dereplicated, low complexity trimmed fastq file. It has further been spiced up with a few surprises. Raw data can be downloaded here. But please don
+The dataset we are going to play with is downscaled from raw data, and 10 mill. reads were extracted from a QC'ed, dereplicated, low complexity trimmed fastq file. It has further been spiced up with a few surprises. Raw data can be downloaded here. But please don
 ```
 ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR104/077/ERR10493277/ERR10493277_1.fastq.gz
 ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR104/077/ERR10493277/ERR10493277_2.fastq.gz
@@ -187,10 +244,7 @@ First validation step extract and plot the read lengths of your QCed fasta file.
 
 # extract readlength distribution from fastq files
 ```
-for file in *.vs.fq
-do
-cat $file | awk '{if(NR%4==2) print length($1)}' | sort -n | uniq -c > $file.read_length.txt &
-done
+cat ERR10493277_small-FINAL.vs.d1.fq | awk '{if(NR%4==2) print length($1)}' | sort -n | uniq -c > $file.read_length.txt &
 ```
 
 
@@ -218,7 +272,7 @@ chmod +x rename_readlength_files.sh
 Now lets run a script that takes one or more read_length.txt files and plots them using ggplot. Make sure that the R conda environment is activated or there is a system wide R installation
 
 ```
-/shared/mikkelpedersen/acad_test/tutorials/acad_workshop2024/scripts/readlengthPLOT_fastq.sh
+/acad_workshop2024/scripts/readlengthPLOT_fastq.sh
 ```
 
 Lets download the pdf and have a look at it. Is there differences between the fqs read length distributions?
@@ -229,22 +283,22 @@ Next, what is it `bowtie2` can do and what options have we set? Look at the comm
 bowtie2 --help
 ```
 
-Lets map the reads to our database (database was generated by indexing the multi reference fasta file refseq211_small_dedup.fa with `bowtie2-build -@ 12 refseq211_small_dedup.fa`). Depending on the size of the file it will run for short and longer time. We skip this step, due to limited time. A bowtie2 database consists of 6 subfiles ending .bt2l. Lets first check they are there.
+Lets map the reads to our database (database was generated by indexing the multi reference fasta file refseq211_small_dedup.fa with `bowtie2-build -@ 4 refseq211_small_dedup.fa`). Depending on the size of the file it will run for short and longer time. We skip this step, due to limited time. A bowtie2 database consists of 6 subfiles ending .bt2l. Lets first check they are there.
 
 ```
-ls -lh  /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa*
+ls -lh  /shared/data/euks_database/refseq211_small_dedup.fa*
 ```
 
-Map reads against database
-```
-DB=/shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
-time bowtie2 --threads 15 -k 1000 -x $DB -U ERR10493277_small-FINAL.vs.d1.fq --no-unal | samtools view -bS - > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.bam
+Map reads against database   
 
+
+```
+time bowtie2 --threads 4 -k 1000 -x /shared/data/euks_database/refseq211_small_dedup.fa -D 15 -R 2 -N 0 -L 22 -i S,1,1.15 -U ERR10493277_small-FINAL.vs.d1.fq --no-unal | samtools view -bS - > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.bam"
 ```
 
 The stdout should look like this, time might vary a bit
 ```
-Mapping ERR10493277_small-FINAL.vs.d1.fq against /shared/mikkelpedersen/acad_test/euks_database/refseq211_small_dedup.fa
+Mapping ERR10493277_small-FINAL.vs.d1.fq against /shared/data/euks_database/refseq211_small_dedup.fa
 10045794 reads; of these:
   10045794 (100.00%) were unpaired; of these:
     9860963 (98.16%) aligned 0 times
@@ -252,12 +306,12 @@ Mapping ERR10493277_small-FINAL.vs.d1.fq against /shared/mikkelpedersen/acad_tes
     170153 (1.69%) aligned >1 times
 1.84% overall alignment rate
 
-real	9m18.101s
-user	90m15.170s
-sys	1m17.688s
+real	13m20.957s
+user	68m48.312s
+sys	1m7.282s
 ```
 
-Extra assignment! Aor those who finishes fast. Consider running the non-filtered file for later comparison, using the same command. Or changing the `bowtie2` option settings
+Extra assignment! For those who finishes fast. Consider running the non-filtered file for later comparison, using the same command. Or changing the `bowtie2` option settings
 
 
 # filtering and refining alignment output using bam-filter and the metaDMG compressbam function
@@ -265,11 +319,16 @@ Extra assignment! Aor those who finishes fast. Consider running the non-filtered
 In this step we clean out the header of the alignment file, to only contain references that have
 
 ```
-time /shared/mikkelpedersen/acad_test/euks_programmes/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
+source /apps/software/functions.sh
+time  /apps/software/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 ```
+
 The stdout should look similar to this once `compressbam` is done. (This tool is valuable when handling databases with large amounts of reference genomes. Especially when the header of the bam files exceeds 2Gb sizes then samtools cannot handle the header as a bam file format, which is the reason we developed this tool)
+
+
+
 ```
-  /shared/mikkelpedersen/acad_test/euks_programmes/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
+/apps/software/metaDMG-cpp/misc/compressbam  --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 	-> compressbam: (compressbam.cpp;Feb 20 2024;09:58:30): '/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/misc/compressbam --threads 4 --input ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam --output ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam'
 	-> input: ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.bam; output: ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam; out format: wb; ref: (null); nthreads: 4
 	-> Header has now been read. Will now start list of refIDs to use
@@ -293,14 +352,13 @@ samtools view ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 
 As ngsLCA (also the version embedded in metaDMG), does not look specifically at each alignment to determine which is closest, we have developed a small algorithm to run over the bam and keep alignments that are closest to reference inside `bam-filter`. This discard alignments that have poorer alignment stats than the set values in options.
 ```
-time filterBAM reassign --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam -t 12 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.reassigned.bam -n 3
-
-for file in *.comp.bam; do time filterBAM reassign --bam $file -t 12 -i 0 -A 92 -m 8G -o $file.reassigned.bam -n 3; done
-```
-
+time filterBAM reassign --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.reassigned.bam -n 3
 
 ```
-filterBAM filter -e 0.6 -m 8G -t 12 -n 3 -A 92 -a 95 -N --bam  MED-2021-20-ver15-2LFQY-210811_S18.reassigned.bam --stats MED-2021-20-ver15-2LFQY-210811_S18.stats.tsv.gz --stats-filtered MED-2021-20-ver15-2LFQY-210811_S18.stats-filtered.tsv.gz --bam-filtered MED-2021-20-ver15-2LFQY-210811_S18.filtered.bam
+
+
+```
+filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam  MED-2021-20-ver15-2LFQY-210811_S18.reassigned.bam --stats MED-2021-20-ver15-2LFQY-210811_S18.stats.tsv.gz --stats-filtered MED-2021-20-ver15-2LFQY-210811_S18.stats-filtered.tsv.gz --bam-filtered MED-2021-20-ver15-2LFQY-210811_S18.filtered.bam
 for file in *.reassigned.bam; do time filterBAM filter -e 0.6 -m 8G -t 12 -n 3 -A 92 -a 95 -N --bam $file --stats $file.stats.tsv.gz --stats-filtered $file.stats-filtered.tsv.gz --bam-filtered $file.filtered.bam ; done
 ```
 
@@ -309,14 +367,14 @@ for file in *.reassigned.bam; do time filterBAM filter -e 0.6 -m 8G -t 12 -n 3 -
 
 
 ```
-#acc2tax=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/combined_accession2taxid_20221112.gz
-nodes=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/nodes.dmp
-names=/projects/wintherpedersen/data/ncbi_taxonomy_01Oct2022/names.dmp
-acc2tax=/projects/lundbeck/people/npl206/TMP/small_accession2taxid.txt.gz
+#acc2tax=/shared/data/euks_taxonomy/combined_accession2taxid_20221112.gz
+nodes=/shared/data/euks_taxonomy/nodes.dmp
+names=/shared/data/euks_taxonomy/names.dmp
+acc2tax=/shared/data/euks_taxonomy/small_accession2taxid.txt.gz
 
 for file in ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.sort.bam
 do
-time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 12 --bam $file --out_prefix $file
+time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp lca --names $names --nodes $nodes --acc2tax $acc2tax --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam $file --out_prefix $file
 done
 
 ```
@@ -344,7 +402,7 @@ quick and dirty version (for the impatient)
 ```
 for file in *.sort.bam *filtered.bam
 do
-time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2  --lib ds --out $file
+time metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2  --lib ds --out $file
 done
 ```
 
@@ -352,7 +410,7 @@ Do full stats (for the patient)
 ```
 for file in *.sort.bam *filtered.bam
 do
-time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out $file
+time metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out $file
 done
 ```
 
@@ -360,7 +418,7 @@ Aggregate (sum) all results up the taxonomic tree from nodes to root.
 ```
 for file in *.sort.bam *filtered.bam
 do
-time /projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp aggregate $file.bdamage.gz --lcastat $file.stat.gz --names $names --nodes $nodes
+time metaDMG-cpp aggregate $file.bdamage.gz --lcastat $file.stat.gz --names $names --nodes $nodes
 done
 ```
 
