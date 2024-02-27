@@ -111,6 +111,7 @@ git remote add upstream https://github.com/original-owner/original-repository.gi
 ```
 Syncing with the Original Repository (Optional): If you want to keep your forked repository up-to-date with changes made to the original repository, you can fetch the changes from the original repository and merge them into your local repository.
 
+
 ```
 git fetch upstream
 ```
@@ -139,6 +140,9 @@ dependencies:
   - bowtie2
   - r-base
   - r-ggplot2
+  - r-dplyr
+  - r-tidyr
+  - r-readr
   - fastp
   - vsearch
   - sga
@@ -248,6 +252,16 @@ cat ERR10493277_small-FINAL.vs.d1.fq | awk '{if(NR%4==2) print length($1)}' | so
 
 
 Rename your readlength distribution files, by copying, pasting and saving this bash script (like we did with the environment files) as rename_readlength_files.sh
+
+
+Define a vector of package names
+```
+packages_to_install <- c("tidyr", "readr", "tidyr")
+```
+Install packages
+```
+install.packages(packages_to_install)
+```
 
 ```
 #!/bin/bash
