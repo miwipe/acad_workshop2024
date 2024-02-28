@@ -583,8 +583,8 @@ metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.co
 ```
 
 Paste the resulting lca stats and damage stats for a final metaDMG out.
-```
 
+```
 zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
 
 zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
