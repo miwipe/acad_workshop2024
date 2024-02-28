@@ -397,6 +397,13 @@ Extra assignment! For those who finishes fast. Consider running the non-filtered
 
 # Filtering and refining alignment output using bam-filter and the metaDMG compressbam function
 
+To run metaDMG-cpp we need to get on a node and activate the function, !this is unique to this setup we have!.
+```
+srun --export=ALL --ntasks-per-node 1 --nodes 1 --mem 1G  -t 02:00:00 --pty bash
+source /apps/software/functions.sh 
+```
+
+
 In this step we clean out the header of the alignment file, to only contain references that have
 
 ``` 
@@ -495,30 +502,20 @@ filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-F
 ## Taxonomic classification (ngsLCA) and DNA damage estimation (metaDMG)
 **While `metaDMG-cpp lca` is running through the alignment file, it also collects mismatch information for all reads and their alignments**
 
-To run metaDMG-cpp we need to get on a node and activate the function, !this is unique to this setup we have!.
-```
-srun --export=ALL --ntasks-per-node 1 --nodes 1 --mem 1G  -t 02:00:00 --pty bash
-source /apps/software/functions.sh 
-```
-
 We start by running the lca analysis, OBS please note that while going through the alignment file, `metaDMG-ccp lca` also spits out look-up files (such as mismatch matrices, read lengths, gc content and more) for the later dfit. 
+
 ```
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=2:00:00
-#SBATCH --job-name=filterBAM
-#SBATCH --mem=8G
-#SBATCH --export=ALL
-#SBATCH --cpus-per-task=2
-#SBATCH --output=filterBAM_filter_out_%A_%a.out
-
 metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix  ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix  ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 ```
 
 Now familiarize yourself with the log output that `metaDMG lca`, importantly if there are accession numbers
@@ -526,7 +523,7 @@ Now familiarize yourself with the log output that `metaDMG lca`, importantly if 
 hint https://www.ncbi.nlm.nih.gov/
 another important look-up tool https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi
 
-are there other ways we can go back and find out what is going on?
+are there other ways to go back and find out what is happening?
 
 hint the database and the taxonomy used.
 
@@ -534,76 +531,79 @@ Now
 https://bioinf.shenwei.me/csvtk/
 https://github.com/TabViewer/tabview
 
-Tabview dependencies was not compatible with the acad-euks_1 environment, but was in the acad-euks_2. Lets activate this
+Tabview dependencies were incompatible with the acad-euks_1 environment but were in the acad-euks_2. Let us activate this
 ```
 conda activate acad-euks_2
 ```
 
 quick and dirty version (for the impatient)
 ```
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=1:00:00
-#SBATCH --job-name=filterBAM
-#SBATCH --mem=8G
-#SBATCH --export=ALL
-#SBATCH --cpus-per-task=4
-#SBATCH --output=filterBAM_filter_out_%A_%a.out
-
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-
-
-
 ```
 
 Do full stats (for the patient)
 ```
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=1:00:00
-#SBATCH --job-name=metadmg_dfit
-#SBATCH --mem=8G
-#SBATCH --export=ALL
-#SBATCH --cpus-per-task=4
-#SBATCH --output=metadmg_dfit_out_%A_%a.out
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
 
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
 
-
-metaDMG-cpp dfit $file.bdamage.gz --names $names --nodes $nodes --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out $file
-
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 ```
 
 Aggregate (sum) all results up the taxonomic tree from nodes to root.
 ```
-#!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --time=1:00:00
-#SBATCH --job-name=metadmg_agg
-#SBATCH --mem=8G
-#SBATCH --export=ALL
-#SBATCH --cpus-per-task=4
-#SBATCH --output=metadmg_agg_out_%A_%a.out
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz  --lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
+
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
+
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
+
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
 ```
 
 Paste the resulting lca stats and damage stats for a final metaDMG out.
 ```
-zcat $file.bdamage.gz.stat.gz | paste - <(zcat $file.dfit.gz) > $file.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
+
+zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
 
 ```
 
-Now lets explore the output, perhaps using tabview
+Now lets explore the output, perhaps using tabview 
 ```
 tabview $file.combined_metaDMG_output.txt
 ```
+
+Make plots 
+
+
