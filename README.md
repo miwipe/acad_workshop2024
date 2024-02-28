@@ -509,7 +509,7 @@ metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/dat
 
 metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
 
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix  ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix  ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
@@ -542,7 +542,7 @@ metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.re
 
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
 
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
@@ -557,7 +557,7 @@ metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.re
 
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
 
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
@@ -572,7 +572,7 @@ metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.co
 
 metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
+metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
 metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
 
@@ -585,11 +585,11 @@ metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.co
 Paste the resulting lca stats and damage stats for a final metaDMG out.
 ```
 
-zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
+zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
 
 zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
 
-zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
+zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
 
 zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
 
