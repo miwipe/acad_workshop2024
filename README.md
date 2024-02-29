@@ -481,7 +481,11 @@ Now we can do the same check as above, how does it look?
 samtools view ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam | cut -f1 | sort | uniq -c | sort -k1 -n
 ```
 
-Now let us use bamfilter on the reassigned alignments to make the final filtering, bam-filter now creates statistics for both the non filtered and the filtered file. GO explore
+Now let us use bamfilter on the reassigned alignments to make the final filtering, bam-filter now creates statistics for both the non-filtered and the filtered file. Go explore! 
+
+
+
+
 ```
 #!/bin/bash
 #SBATCH --nodes=1
@@ -532,6 +536,20 @@ https://bioinf.shenwei.me/csvtk/
 https://github.com/TabViewer/tabview
 
 Tabview dependencies were incompatible with the acad-euks_1 environment but were in the acad-euks_2. Let us activate this
+
+`Tabview`
+Navigation:
+**Arrow keys**: Move the cursor up, down, left, or right.
+**Page Up and Page Down**: Scroll the view up or down by one page.
+**Home and End**: Move to the beginning or end of the data.
+Sorting:
+**S or s**
+**A or a**
+Searching:
+**/**: Start searching.
+**Enter**: Find the next occurrence of the search term.
+**Escape**: Exit search mode.
+
 ```
 conda activate acad-euks_2
 ```
