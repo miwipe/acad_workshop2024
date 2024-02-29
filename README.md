@@ -484,8 +484,6 @@ samtools view ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.fa.comp.bam
 Now let us use bamfilter on the reassigned alignments to make the final filtering, bam-filter now creates statistics for both the non-filtered and the filtered file. Go explore! 
 
 
-
-
 ```
 #!/bin/bash
 #SBATCH --nodes=1
@@ -503,23 +501,75 @@ filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-F
 filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam
 ```
 
+
+Okay, now go explore the stats, first let us start with the non-filtered file. Start R, and install packages needed (we did this for the first environment but not in acad-euks_2). 
+
+```
+R
+install.packages("readr")
+install.packages("ggplot2")
+install.packages("tidyr")
+
+library(readr)
+library(ggplot2)
+library(tidyr)
+
+# Load the table
+data <- readr::read_tsv("ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz")
+
+# Histogram of a read_length_mean 
+plot <- ggplot(data, aes(x = read_length_mean)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  labs(title = "read_length_mean", x = "Length in Bp", y = "Frequency")
+
+# Save the plot as a PDF file
+ggsave("read_length_mean_histogram_plot.pdf", plot, width = 8, height = 6)
+```
+You can try and change the x variable too, look into the https://github.com/genomewalker/bam-filter documentation for variable explanations. 
+
+```
+# Create a point plot
+point_plot <- ggplot(data, aes(x = breadth, y = breadth_exp_ratio)) +
+  geom_point() + # Add points
+  labs(title = "Breadth vs. Breadth Exp Ratio", x = "Breadth", y = "Breadth Exp Ratio")
+
+# Save the plot as a PDF file
+ggsave("point_plot.pdf", point_plot, width = 8, height = 6)
+```
+
+Download plot into a folder on your local machine, here I download it to my Download folder
+```
+scp -r $USER@acadworkshop.uoa.cloud:/shared/$USER/acad-workshop/euks/read_length_mean_histogram_plot.pdf Downloads/
+```
+
+Try and play around with the different variables and their relationship with each other, select two plots with variables that we can discuss in plenum. Consider which statistic would be good to use for filtering, what values and why?
+
+```
+# Create a point plot
+point_plot <- ggplot(data, aes(x = coverage_mean, y = log(reference_length), color = n_reads > 100, size = n_reads)) +
+  geom_point() + # Add points
+  scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) + # Set color for points
+  labs(title = "Coverage mean vs. reference_length", x = "coverage_mean", y = "log(reference_length)")
+
+# Save the plot as a PDF file
+ggsave("Cov_reflength_point_plot.pdf", point_plot, width = 8, height = 6)
+
+```
+
 ## Taxonomic classification (ngsLCA) and DNA damage estimation (metaDMG)
 **While `metaDMG-cpp lca` is running through the alignment file, it also collects mismatch information for all reads and their alignments**
 
-We start by running the lca analysis, OBS please note that while going through the alignment file, `metaDMG-ccp lca` also spits out look-up files (such as mismatch matrices, read lengths, gc content and more) for the later dfit. 
+We start by running the lca analysis, OBS please note that while going through the alignment file, `metaDMG-ccp lca` also spits out look-up files (such as mismatch matrices, read lengths, gc content and more) for the later dfit.
 
+
+Now we move to the taxonomic classification of the reads (ngsLCA embedded in metaDMG-cpp) 
 ```
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix EERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix  ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
-
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
-
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+srun --export=ALL --ntasks-per-node 3 --nodes 1 --mem 8G  -t 02:00:00 --pty bash
+source /apps/software/functions.sh 
+```
+Run the LCA. 
+```
+metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 ```
 
 Now familiarize yourself with the log output that `metaDMG lca`, importantly if there are accession numbers
@@ -556,17 +606,9 @@ conda activate acad-euks_2
 
 quick and dirty version (for the impatient)
 ```
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 ```
 
 Do full stats (for the patient)
