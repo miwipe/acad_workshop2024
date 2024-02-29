@@ -581,7 +581,7 @@ are there other ways to go back and find out what is happening?
 
 hint the database and the taxonomy used.
 
-Now
+Cool tools to know! 
 https://bioinf.shenwei.me/csvtk/
 https://github.com/TabViewer/tabview
 
@@ -593,10 +593,10 @@ Navigation:
 **Page Up and Page Down**: Scroll the view up or down by one page.
 **Home and End**: Move to the beginning or end of the data.
 Sorting:
-**S or s**
-**A or a**
+**S or s** for numbers >1 also works for text strings. 
+**A or a** for decimal numbers 1-0 
 Searching:
-**/**: Start searching.
+**/**: Start searching and anter your query.
 **Enter**: Find the next occurrence of the search term.
 **Escape**: Exit search mode.
 
@@ -611,59 +611,88 @@ metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp
 
 ```
 
-Do full stats (for the patient)
+For full stats (for the patient).
 ```
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
-
 metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
-
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
 ```
 
 Aggregate (sum) all results up the taxonomic tree from nodes to root.
 ```
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz  --lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
 metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
-metaDMG-cpp aggregate ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz -lcastat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.stat.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp
-
 ```
 
 Paste the resulting lca stats and damage stats for a final metaDMG out.
 
 ```
-zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
-
-zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
-
-zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
-
 zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
-
-zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt
-
-zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz.stat.gz | paste - <(zcat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.dfit.gz) > ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
-
 ```
 
 Now lets explore the output, perhaps using tabview 
 ```
-tabview $file.combined_metaDMG_output.txt
+tabview ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt
 ```
 
-Make plots 
+Make plots
+
+
+
+
+```
+
+# Read in the table
+data <- read.table("ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt", 
+                   header = TRUE, # If the file has a header row
+                   sep = "\t",    # Specify the delimiter used in the file (tab-separated)
+                   stringsAsFactors = FALSE)  # Ensure character columns are read as strings
+
+# Display the first few rows of the data
+head(data)
+
+# Set variable for filtering, maybe start without and then set variable depending on your data?
+# Minimum amount of damage (filtered for)
+A_Min = 0.20
+#Lambda Likelihood Ratio
+Significance = 3.0
+# Minimum reads for parsing taxa
+MinRead = 200
+# Minimum mean read length
+MeanLength = 35
+###### subsetting the table using grepl and filter, parameters you need to set and possibly add more but here we look at plants only
+df1 <- data %>% filter(A > A_Min, nreads > MinRead, mean_rlen >= MeanLength, Zfit > Significance,  grepl("Viridiplantae",taxa_path), grepl("\\bgenus\\b", rank))
+
+
+# Create the ggplot bar plot
+bar_plot <- ggplot(df1, aes(x = name, y = nreads)) +
+  geom_bar(stat = "identity", fill = "lightblue") +  # Create bars with nreads values
+  labs(title = "Bar Plot of nreads by genus", x = "genus", y = "number of reads") +  # Add labels
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels by 45 degrees
+
+# Save the plot as a PDF file
+ggsave("bar_plot.pdf", plot = bar_plot, width = 8, height = 6)
+
+
+
+
+
+
+# Create the ggplot tile plot
+tile_plot <- ggplot(df1, aes(x = nreads, y = name)) +
+  geom_tile(aes(fill = nreads)) +  # Add tiles with nreads as fill color
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +  # Set gradient fill colors
+  labs(title = "", x = "Number of reads", y = "Taxa (genus)")  # Add labels
+
+# Save the plot as a PDF file
+ggsave("tile_plot.pdf", plot = tile_plot, width = 8, height = 6)
+
+
+
+
+
+
+
+
+```
+
 
 
