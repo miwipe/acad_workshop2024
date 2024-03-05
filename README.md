@@ -21,6 +21,17 @@ htop
 ```
 press q for quit to exit the screen
 
+First download the data, taxonomy, database and basic scripts for this tutorial and unzip all files (except the accc2taxid file which needs to stay zipped.
+
+```
+wget link_2_erda_folder/2m_tutorial_data.tar.gz 
+tar -xzvf 2m_tutorial_data.tar.gz 
+cd 2m_tutorial_data
+
+for file in *fq.gz; do gunzip $file & done
+for file in database/refseq211_small_dedup.fa.*; do gunzip $file & done
+for file in small_taxonomy/n*; do gunzip $file & done
+```
 
 ## Make github repo and clone it to your home directory in the cloud
 GitHub is a web-based platform used for version control and collaboration on software development projects. It provides a variety of features for developers and teams to work together efficiently on coding projects.
@@ -361,7 +372,7 @@ Extra assignment! For those who finish fast. Consider running the non-filtered f
 
 # Filtering and refining alignment output using bam-filter and the metaDMG compressbam function
 
-If you are on a slurm system, you can likely ask for a bash shell using below command (depending on the system setup, contact your local admin). If not, please neglect the following command!
+If you are on a slurm system, you can likely ask for a bash shell using the below command (depending on the system setup, contact your local admin). If not, please neglect the following command!
 ```
 srun --export=ALL --ntasks-per-node 8 --nodes 1 --mem 10G  -t 02:00:00 --pty bash
 ```
@@ -434,13 +445,13 @@ Now let us run the reassignment of each read hits to the reference.
 #SBATCH --cpus-per-task=4
 #SBATCH --output=filterbam_reaasign_out_%A_%a.out
 
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.bam	-t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam -n 3
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam -n 3
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam -n 3
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.log.txt 
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.log.txt 
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam.log.txt
 
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam -n 3
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam -n 3
-filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam -n 3
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.log.txt
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.log.txt
+filterBAM reassign --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.bam -t 4 -i 0 -A 92 -m 8G -o ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam -n 10 &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.log.txt
 ```
 
 Now we can do the same check as above, how does it look? 
@@ -460,26 +471,34 @@ Now let us use bamfilter on the reassigned alignments to make the final filterin
 #SBATCH --export=ALL
 #SBATCH --cpus-per-task=4
 #SBATCH --output=filterBAM_filter_out_%A_%a.out
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam
-filterBAM filter -e 0.6 -m 8G -t 4 -n 3 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam
+
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam.log.txt 
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam.log.txt 
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.d1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam.log.txt 
+
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam.log.txt 
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam.log.txt 
+filterBAM filter -e 0.6 -m 8G -t 4 -n 10 -A 92 -a 95 -N --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam --stats ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats.tsv.gz --stats-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz --bam-filtered ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam &> ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam.log.txt 
 ```
 
+Have a look at the log files and familiarize yourself with this general output.
 
+```
+cat ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam.log.txt 
+```
 Okay, now go explore the stats, first, let us start with the non-filtered file. Start R, and install packages needed (we did this for the first environment but not in acad-euks_2). You can also simply download the filtered and non-filtered stats files *.stats-filtered.tsv.gz and *.stats.tsv.gz 
 
 ```
 R
 install.packages("readr")
 install.packages("ggplot2")
-install.packages("tidyverse")
+install.packages("tidyr")
+install.packages("dplyr)
 
 library(readr)
 library(ggplot2)
-library(tidyverse)
+library(tidyr)
+library(dplyr)
 
 # Load the table
 data <- readr::read_tsv("ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.bam.stats-filtered.tsv.gz")
@@ -503,23 +522,42 @@ point_plot <- ggplot(data, aes(x = breadth, y = breadth_exp_ratio)) +
 # Save the plot as a PDF file
 ggsave("point_plot.pdf", point_plot, width = 8, height = 6)
 ```
+or lastly, make a correlogram using GGally
+
+```
+install.packages("GGally")
+library(GGally)
+
+data_filtered <- data %>% filter(n_reads >= 500) %>% select(n_reads, read_ani_median, coverage_mean_trunc, exp_breadth, cov_evenness, coverage_covered_mean, norm_gini, breadth, gini, c_v, norm_entropy, edit_distances)
+
+# Create the pairwise scatterplot matrix
+ cor_plot <- ggpairs(data_filtered, 
+        progress = FALSE,
+        aes(alpha = 0.65))
+
+ggsave("correlogram_plot.pdf", cor_plot, width = 10, height = 10)
+```
 
 Download plot into a folder on your local machine, here I download it to my Download folder
 ```
-scp -r $USER@path2.cloud:/path2project/read_length_mean_histogram_plot.pdf .
+noglob scp -r $USER@path2.cloud:/path2project/*.pdf .
 ```
 
 Try and play around with the different variables and their relationship with each other, select two plots with variables that we can discuss in plenum. Consider which statistic would be good to use for filtering, what values and why?
 
 ```
-# Create a point plot
-point_plot <- ggplot(data, aes(x = coverage_mean, y = log(reference_length), color = n_reads > 100, size = n_reads)) +
+# Create another plot
+point_plot2 <- ggplot(data_filtered , aes(x = cov_evenness, y = norm_entropy, color = n_reads > 700, size = n_reads)) +
   geom_point() + # Add points
+  geom_text(data = subset(data, n_reads > 700), aes(label = reference), vjust = -0.5) + # Add labels for n_reads > 700
   scale_color_manual(values = c("TRUE" = "darkgreen", "FALSE" = "black")) + # Set color for points
-  labs(title = "Coverage mean vs. reference_length", x = "coverage_mean", y = "log(reference_length)")
+  scale_y_continuous(limits = c(0, 1.01)) + 
+  scale_x_continuous(limits = c(0, 1.01)) + 
+  labs(title = "cov_evenness vs. norm_entropy", x = "cov_evenness", y = "norm_entropy") +
+  theme(text = element_text(size = 17))
 
 # Save the plot as a PDF file
-ggsave("Cov_reflength_point_plot.pdf", point_plot, width = 8, height = 6)
+ggsave("cov_evennessVSnorm_entropy_plot.pdf", point_plot2, width = 8, height = 6)
 
 ```
 
@@ -529,14 +567,34 @@ ggsave("Cov_reflength_point_plot.pdf", point_plot, width = 8, height = 6)
 We start by running the lca analysis, OBS please note that while going through the alignment file, `metaDMG-ccp lca` also spits out look-up files (such as mismatch matrices, read lengths, gc content and more) for the later dfit.
 
 
-Now we move to the taxonomic classification of the reads (ngsLCA embedded in metaDMG-cpp) 
+Now we move to the taxonomic classification of the reads (ngsLCA embedded in metaDMG-cpp), if on a slurm ask for a bash shell. 
 ```
 srun --export=ALL --ntasks-per-node 3 --nodes 1 --mem 8G  -t 02:00:00 --pty bash
-source /apps/software/functions.sh 
 ```
+
 Run the LCA. 
+
 ```
-metaDMG-cpp lca --names /shared/data/euks_taxonomy/names.dmp --nodes /shared/data/euks_taxonomy/nodes.dmp --acc2tax /shared/data/euks_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.93 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=2:00:00
+#SBATCH --job-name=metadmgLCA
+#SBATCH --mem=16G
+#SBATCH --export=ALL
+#SBATCH --cpus-per-task=4
+#SBATCH --output=metadmgLCA_out_%A_%a.out
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp lca --names /data/small_taxonomy/names.dmp --nodes /data/small_taxonomy/nodes.dmp --acc2tax /data/small_taxonomy/small_accession2taxid.txt.gz --sim_score_low 0.95 --sim_score_high 1.0 --how_many 30 --weight_type 1 --fix_ncbi 0 --threads 4 --bam ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bam --out_prefix ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 ```
 
 Now familiarize yourself with the log output that `metaDMG lca`, importantly if there are accession numbers
@@ -571,16 +629,53 @@ Searching:
 conda activate acad-euks_2
 ```
 
-quick and dirty version (for the impatient)
+Quick and dirty damage calculations (for the impatient)
 ```
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=2:00:00
+#SBATCH --job-name=metadmgDfit
+#SBATCH --mem=16G
+#SBATCH --export=ALL
+#SBATCH --cpus-per-task=4
+#SBATCH --output=metadmgDfit_out_%A_%a.out
 
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 ```
 
 For full stats (for the patient).
 ```
-metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /shared/data/euks_taxonomy/names.dmp --nodes  /shared/data/euks_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234 --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --time=2:00:00
+#SBATCH --job-name=metadmgDfit
+#SBATCH --mem=16G
+#SBATCH --export=ALL
+#SBATCH --cpus-per-task=4
+#SBATCH --output=metadmgAggregate_out_%A_%a.out
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
+
+/projects/lundbeck/people/npl206/programmes/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered
+
+/ngsDMG/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered
+
+/metaDMG-cpp/metaDMG-cpp dfit ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.bdamage.gz --names /data/small_taxonomy/names.dmp --nodes  /data/small_taxonomy/nodes.dmp --showfits 2 --nopt 10 --nbootstrap 20 --doboot 1 --seed 1234  --lib ds --out ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered
 
 ```
 
