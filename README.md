@@ -730,7 +730,8 @@ header=$(head -n 1 "$header_file")
 # Add the header to the concatenated file
 echo -e "filename\t$header" > concatenated_metaDMGdata.tsv
 
-for file in ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
+for file in ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt \
+	    ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
             ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
             ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.comp.reassign.filtered.combined_metaDMG_output.txt \
             ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
