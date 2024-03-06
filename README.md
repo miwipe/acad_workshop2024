@@ -728,7 +728,7 @@ header_file="ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.comp.re
 header=$(head -n 1 "$header_file")
 
 # Add the header to the concatenated file
-echo -e "filename\t$header" > concatenated_metaDMGdata.txt
+echo -e "filename\t$header" > concatenated_metaDMGdata.tsv
 
 for file in ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
             ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt \
@@ -737,14 +737,14 @@ for file in ERR10493277_small-FINAL.vs.ds1.fq.refseq211_small_dedup.L22.N1.comp.
             ERR10493277_small-FINAL.vs.fq.refseq211_small_dedup.L21.N1.comp.reassign.filtered.combined_metaDMG_output.txt
 do
     tail -n +2 "$file" | while read -r line; do
-        echo -e "$file\t$line" >> concatenated_metaDMGdata.txt
+        echo -e "$file\t$line" >> concatenated_metaDMGdata.tsv
     done
 done
 ```
 
 Now let us explore the output, perhaps using tabview or less -S or ??
 ```
-tabview concatenated_data.txt
+tabview concatenated_metaDMGdata.tsv
 ```
 
 Make plots perhaps initially with one sample
@@ -781,26 +781,20 @@ bar_plot <- ggplot(df1, aes(x = name, y = nreads)) +
 # Save the plot as a PDF file
 ggsave("bar_plot.pdf", plot = bar_plot, width = 8, height = 6)
 
+all_data <- read_delim("concatenated_metaDMGdata.tsv", 
+                                       delim = "\t", escape_double = FALSE, 
+                                       trim_ws = TRUE)
 
-
-all_data <- read.table("concatenated_data.txt", 
-                   header = TRUE,
-                   sep = "\t", 
-                   stringsAsFactors = FALSE) 
-
+all_data2 <- all_data %>% filter(A > 0.25, nreads > 250, mean_rlen >= 35, Zfit > 2.0, grepl("Viridiplantae",taxa_path), grepl("\\bgenus\\b", rank))
 
 # Create the ggplot tile plot
-tile_plot <- ggplot(all_data, aes(x = nreads, y = name)) +
+tile_plot <- ggplot(all_data2, aes(x = nreads, y = filename)) +
   geom_tile(aes(fill = nreads)) +  # Add tiles with nreads as fill color
   scale_fill_gradient(low = "lightblue", high = "darkblue") +  # Set gradient fill colors
   labs(title = "", x = "Number of reads", y = "Taxa (genus)")  # Add labels
 
 # Save the plot as a PDF file
 ggsave("tile_plot.pdf", plot = tile_plot, width = 8, height = 6)
-
-
-
-
 ```
 
 
